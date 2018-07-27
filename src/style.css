@@ -1,0 +1,126 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,600,800');
+
+body {
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+}
+
+h1,h2,h3,h4,h5,h6 {
+  letter-spacing: -1px;
+  margin: 0;
+}
+
+.player .poster {
+    width: 100%;
+    height: 200px;
+    background: #222222;
+    color: #fff;
+
+    text-align: center;
+}
+
+#albumArt {
+    height: 50px;
+    width: auto;
+    margin: 25px auto 0 auto;
+}
+
+.poster #songTitle {
+    margin: 0 auto;
+    padding: 20px 15px;
+    font-size: 1.5em;
+    line-height: 100%;
+    width: 80%;
+
+    max-height: 55px;
+    overflow-y: hidden;
+}
+
+.poster #songArtist {
+  font-size: 0.5em;
+}
+
+.player .controls {
+    width: calc(100% - 20px);
+    margin: 0 10px;
+    text-align: center;
+    font-size: 2em;
+    padding: 20px 0;
+
+    display: grid;
+    grid-template-columns: 6fr 4fr;
+}
+
+.player .controls i {
+    padding: 0 15px;
+}
+
+.controls i:first-child, .controls i:last-child {
+    color: rgba(0,0,0,1);
+}
+
+.controls i:first-child.limit, .controls i:last-child.limit {
+    color: rgba(0,0,0,0.15);
+}
+
+.seeker {
+    width: 100%;
+    margin-top: -15px;
+}
+
+.seeker > #seekBar {
+    width: 100%;
+    margin: 0;
+
+    -webkit-appearance: none;
+    width: 100%;
+    height: 5px;
+    background: #d3d3d3;
+    outline: none;
+    transition-duration: .2s;
+    overflow: hidden;
+}
+
+
+.seeker > #seekBar::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 0px;
+    height: 10px;
+    box-shadow: -100vw 0 0 100vw red;
+}
+
+.seeker > #seekBar::-webkit-slider-thumb:after {
+    content: " ";
+    background: red;
+    padding: 30px;
+}
+
+#volumeBar {
+    -webkit-appearance: none;
+    background: none;
+    width: 100%;
+
+    position: relative;
+    top: -10px;
+    outline: none;
+}
+
+#volume-counterpart {
+    width: 80%;
+}
+
+#vol-playtime {
+    height: 4px;
+    background: lightgrey;
+    position: relative;
+    top: 16px;
+    left: 2px;
+}
+
+#vol-played {
+    background: red;
+    height: 100%;
+    width: 0;
+}
+
+/*# sourceMappingURL=style.css.map */

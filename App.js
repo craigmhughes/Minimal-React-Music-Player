@@ -1,0 +1,216 @@
+import React, { Component } from 'react';
+
+const NodeID3 = require('node-id3');
+const fs = require('fs');
+
+
+class App extends Component {
+    constructor() {
+        super();
+
+        this.state = {
+            paused: true,
+            music_dir: __dirname + "/src/",
+            music_files: undefined,
+            current_song: 2,
+            current_info: {
+                title: undefined,
+                artist: undefined
+            }
+        };
+
+        this.readMusicFiles();
+
+        // Call DOM effects in this method.
+        this.checkWin();
+    }
+
+    checkWin(){
+        window.addEventListener("load", ()=>{
+            this.setVolume();
+
+            this.state.current_info.title = this.state.current_info.title.length >= 30 ?
+                this.state.current_info.title.substring(0,30) + "..." :
+                this.state.current_info.title;
+
+            // Re-render elms dependent on state results
+            this.forceUpdate();
+        });
+    }
+
+    // Read chosen Music Directory and push MP3 files to state array -- Do once.
+    readMusicFiles(){
+        let files = fs.readdirSync(this.state.music_dir);
+        let musicfiles = [];
+
+        for(let i = 0; i < files.length; i++){
+            if(files[i].includes(".mp3")){
+                musicfiles.push(files[i]);
+            }
+        }
+
+        // Set music files to the read directory
+        this.state.music_files = musicfiles;
+        this.readTrack();
+    }
+
+    readTrack(){
+        let songname = this.state.music_files[this.state.current_song];
+        let file = fs.readFileSync(this.state.music_dir + songname);
+
+        Promise.resolve(NodeID3.read(file)).then((resp)=>{
+            // console.log(resp);
+
+            if(resp.artist !== undefined && resp.title !== undefined){
+                this.setState({
+                    current_info: {
+                        title: resp.title,
+                        artist: resp.artist
+                    }
+                });
+
+
+            } else if(songname.includes("-")){
+                // If file does not include tags, check if file is hyphenated.
+                // This will normally include the details needed.
+
+                let details = songname.replace(".mp3","").split(" - ");
+                // Follow iTunes format -- Artist first, then song name.
+                this.setState({
+                    current_info: {
+                        title: details[1],
+                        artist: details[0]
+                    }
+                });
+            } else {
+                this.setState({
+                    current_info: {
+                        title: songname.replace(".mp3",""),
+                        artist: "Unknown Artist"
+                    }
+                });
+            }
+
+            // Retrieve Album Art if exists
+            if(resp.image !== undefined) {
+                let getImageResult = resp.image;
+                let b64encoded = btoa(String.fromCharCode.apply(null, getImageResult.imageBuffer));
+                let datajpg = "data:image/jpg;base64," + b64encoded;
+
+                document.getElementById("albumArt").src = datajpg;
+            } else {
+                document.getElementById("albumArt").src = __dirname + "/src/imgs/null-album.png";
+            }
+        });
+
+        let audio = document.getElementById("audio");
+        audio.src = this.state.music_dir + this.state.music_files[this.state.current_song];
+        this.playAudio();
+    }
+
+
+    playAudio(){
+        // let audio = new Audio(this.state.music_dir + this.state.music_files[this.state.current_song]);
+        let audio = document.getElementById("audio");
+
+        if (!this.state.paused) {
+            audio.play();
+        } else {
+            audio.pause();
+        }
+    }
+
+    togglePlay(){
+        this.state.paused = !this.state.paused;
+        document.getElementById("play-button").className = !this.state.paused ? "far fa-pause-circle" : "far fa-play-circle";
+        this.playAudio();
+        this.getTrackPoint();
+    }
+
+    // Skip track forward/back based on ford val.
+    skipTrack(ford){
+        if(ford) {
+            this.state.current_song += 1;
+        } else {
+            this.state.current_song -= 1;
+        }
+        this.readTrack();
+    }
+
+    setTrackPoint(value){
+        let audio = document.getElementById("audio");
+        let percent = audio.duration / 100;
+
+        audio.currentTime = percent * value;
+    }
+
+    setVolume(){
+        let audio = document.getElementById("audio");
+        audio.volume = document.getElementById("volumeBar").value / 100;
+
+        document.getElementById("vol-played").style.width = document.getElementById("volumeBar").value + "%";
+    }
+
+    getTrackPoint(){
+        if (!this.state.paused) {
+            let audio = document.getElementById("audio");
+
+            // Will refresh seekbar every second
+            setInterval(() => {
+                document.getElementById("seekBar").value = (audio.currentTime / audio.duration) * 100;
+                document.getElementById("volumeBar").value = audio.volume * 100;
+                if (audio.currentTime >= audio.duration) {
+                    if(this.state.current_song === this.state.music_files.length - 1) {
+                        this.state.paused = true;
+                        document.getElementById("play-button").className = "far fa-play-circle";
+                        clearInterval();
+                    } else {
+                        this.skipTrack(true);
+                    }
+                }
+            }, 500);
+        } else {
+            clearInterval();
+        }
+    }
+
+    render(){
+
+        return (
+            <main className="App">
+                <section className="player">
+                    <section className="poster">
+                        <img id="albumArt" src={__dirname + "/src/imgs/null-album.png"}/>
+                        <h1 id="songTitle">{this.state.current_info.title}<br/><span id="songArtist">{this.state.current_info.artist}</span></h1>
+                    </section>
+
+                    <section className="seeker">
+                        <input type="range" min="0" max="100" step="1" defaultValue="0"
+                               onChange={()=>{this.setTrackPoint(document.getElementById("seekBar").value);}} id="seekBar">{}</input>
+                    </section>
+
+                    <section className="controls">
+                        <div>
+                            <i className={this.state.current_song > 0 ? "fa fa-chevron-left" : "fa fa-chevron-left limit"}
+                               onClick={()=>{if (this.state.current_song > 0) {this.skipTrack(false)}}}>{}</i>
+
+                            <i className={!this.state.paused ? "far fa-pause-circle" : "far fa-play-circle"}
+                               onClick={()=>{this.togglePlay()}} id="play-button">{}</i>
+
+                            <i className={this.state.current_song < this.state.music_files.length - 1? "fa fa-chevron-right" : "fa fa-chevron-right limit"}
+                               onClick={()=>{if (this.state.current_song < this.state.music_files.length - 1) {this.skipTrack(true)}}}>{}</i>
+                        </div>
+                        <div>
+                            <div id="volume-counterpart">
+                                <div id="vol-playtime"><div id="vol-played">{}</div></div>
+                                <input type="range" min="0" max="100" step="1" defaultValue="1" onChange={()=>{this.setVolume()}} id="volumeBar"/>
+                            </div>
+                        </div>
+                    </section>
+                </section>
+            </main>
+        );
+    }
+}
+
+export default App;

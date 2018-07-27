@@ -1,0 +1,25 @@
+{
+  "name": "musicplayer-possibly",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "craig hughes",
+  "license": "ISC",
+  "dependencies": {
+    "electron": "^2.0.5",
+    "iconv-lite": "^0.4.23",
+    "jsmediatags": "^3.8.1",
+    "node-id3": "^0.1.5",
+    "react": "^16.4.1",
+    "react-audio-player": "^0.10.0",
+    "react-dom": "^16.4.1",
+    "react-scripts": "1.1.4",
+    "safer-buffer": "^2.1.2"
+  },
+  "devDependencies": {
+    "electron-prebuilt-compile": "^2.0.4"
+  }
+}
