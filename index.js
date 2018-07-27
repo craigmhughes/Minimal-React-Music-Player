@@ -8,7 +8,8 @@ let mainWindow;
 
 app.on('ready', function(){
     mainWindow = new BrowserWindow({
-        resizable: false
+        resizable: false,
+        frame: false
     });
 
     mainWindow.loadURL(url.format({

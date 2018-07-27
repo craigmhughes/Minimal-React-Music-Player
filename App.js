@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 const NodeID3 = require('node-id3');
+const { remote } = require('electron');
 const fs = require('fs');
 
 
@@ -20,12 +21,13 @@ class App extends Component {
         };
 
         this.readMusicFiles();
+        // remote.BrowserWindow.getFocusedWindow().setAlwaysOnTop(true);
 
         // Call DOM effects in this method.
-        this.checkWin();
+        this.checkWindow();
     }
 
-    checkWin(){
+    checkWindow(){
         window.addEventListener("load", ()=>{
             this.setVolume();
 
@@ -98,8 +100,10 @@ class App extends Component {
                 let datajpg = "data:image/jpg;base64," + b64encoded;
 
                 document.getElementById("albumArt").src = datajpg;
+                document.getElementById("posterBG").style.backgroundImage = `url(${datajpg})`;
             } else {
                 document.getElementById("albumArt").src = __dirname + "/src/imgs/null-album.png";
+                document.getElementById("posterBG").style.backgroundImage = 'none';
             }
         });
 
@@ -178,12 +182,18 @@ class App extends Component {
 
         return (
             <main className="App">
+                <div id="windowBar">
+                    <i className="fas fa-circle" onClick={()=>{remote.BrowserWindow.getFocusedWindow().close()}}>{}</i>
+                    <i className="fas fa-window-minimize" onClick={()=>{remote.BrowserWindow.getFocusedWindow().minimize()}}>{}</i>
+                </div>
                 <section className="player">
                     <section className="poster">
-                        <img id="albumArt" src={__dirname + "/src/imgs/null-album.png"}/>
-                        <h1 id="songTitle">{this.state.current_info.title}<br/><span id="songArtist">{this.state.current_info.artist}</span></h1>
+                        <div className="overlay">
+                            <img id="albumArt" src={__dirname + "/src/imgs/null-album.png"}/>
+                            <h1 id="songTitle">{this.state.current_info.title}<br/><span id="songArtist">{this.state.current_info.artist}</span></h1>
+                        </div>
+                        <div id="posterBG">{}</div>
                     </section>
-
                     <section className="seeker">
                         <input type="range" min="0" max="100" step="1" defaultValue="0"
                                onChange={()=>{this.setTrackPoint(document.getElementById("seekBar").value);}} id="seekBar">{}</input>
@@ -203,7 +213,7 @@ class App extends Component {
                         <div>
                             <div id="volume-counterpart">
                                 <div id="vol-playtime"><div id="vol-played">{}</div></div>
-                                <input type="range" min="0" max="100" step="1" defaultValue="1" onChange={()=>{this.setVolume()}} id="volumeBar"/>
+                                <input type="range" min="0" max="100" step="1" defaultValue="50" onChange={()=>{this.setVolume()}} id="volumeBar"/>
                             </div>
                         </div>
                     </section>
