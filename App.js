@@ -30,11 +30,7 @@ class App extends Component {
     checkWindow(){
         window.addEventListener("load", ()=>{
             this.setVolume();
-
-            this.state.current_info.title = this.state.current_info.title.length >= 30 ?
-                this.state.current_info.title.substring(0,30) + "..." :
-                this.state.current_info.title;
-
+            this.checkTitle();
             // Re-render elms dependent on state results
             this.forceUpdate();
         });
@@ -107,8 +103,6 @@ class App extends Component {
             }
         });
 
-
-
         let audio = document.getElementById("audio");
         audio.src = this.state.music_dir + this.state.music_files[this.state.current_song];
         this.playAudio();
@@ -140,7 +134,20 @@ class App extends Component {
         } else {
             this.state.current_song -= 1;
         }
+
         this.readTrack();
+        this.checkTitle();
+    }
+
+    checkTitle(){
+        setTimeout(()=> {
+            this.state.current_info.title = this.state.current_info.title.length >= 25 ?
+                this.state.current_info.title.substring(0, 22) + "..." :
+                this.state.current_info.title;
+
+            console.log(this.state.current_info.title);
+            this.forceUpdate();
+        });
     }
 
     setTrackPoint(value){
@@ -191,14 +198,18 @@ class App extends Component {
                 <section className="player">
                     <section className="poster">
                         <div className="overlay">
-                            <img id="albumArt" src={__dirname + "/src/imgs/null-album.png"}/>
-                            <h1 id="songTitle">{this.state.current_info.title}<br/><span id="songArtist">{this.state.current_info.artist}</span></h1>
+                            <div className="container" style={{height: "100%", width: "100%"}}>
+                                <img id="albumArt" src={__dirname + "/src/imgs/null-album.png"}/>
+                            </div>
+                            <div className="container" style={{paddingLeft: "20px"}}>
+                                <h1 id="songTitle">{this.state.current_info.title}<br/><span id="songArtist">{this.state.current_info.artist}</span></h1>
+                                <section className="seeker">
+                                    <input type="range" min="0" max="100" step="1" defaultValue="0"
+                                           onChange={()=>{this.setTrackPoint(document.getElementById("seekBar").value);}} id="seekBar">{}</input>
+                                </section>
+                            </div>
                         </div>
                         <div id="posterBG">{}</div>
-                    </section>
-                    <section className="seeker">
-                        <input type="range" min="0" max="100" step="1" defaultValue="0"
-                               onChange={()=>{this.setTrackPoint(document.getElementById("seekBar").value);}} id="seekBar">{}</input>
                     </section>
 
                     <section className="controls">

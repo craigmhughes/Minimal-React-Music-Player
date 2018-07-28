@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css?family=Montserrat:400,600,800');
 
 html, body {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0);
 }
 
 body {
@@ -22,7 +22,8 @@ h1,h2,h3,h4,h5,h6 {
     position: fixed;
     top: 0;
     -webkit-app-region: drag;
-    color: #222;
+    color: #fff;
+
     z-index: 20;
     font-size: 0.7em;
     padding: 5px 0 0 5px;
@@ -34,37 +35,56 @@ h1,h2,h3,h4,h5,h6 {
     cursor: pointer;
 }
 
+.player {
+    height: 50px;
+}
+
 .player .poster {
-    width: 100%;
+    width: 90%;
     height: 100px;
     margin-bottom: 20px;
     background: none;
-    color: #fff;
+    color: #222;
+    background: #e3e3e3;
+    font-size: 0.7em;
 
     text-align: center;
     z-index: -1;
+    margin: 0 5%;
+    border-radius: 10px 10px 0 0;
+    position: relative;
+
+    transition-duration: 0.5s;
+    top: 90px;
+}
+
+#root:hover .player .poster {
+    position: relative;
+    top: 20px;
 }
 
 #albumArt {
-    height: 50px;
-    width: auto;
-    margin: 45px auto 0 auto;
-    display: none;
+    height: auto;
+    width: 100%;
+    border-radius: 10px 0 0 0;
+
+    z-index: 20;
 }
 
 .poster #songTitle {
-    margin: 0 auto;
     padding: 20px 15px;
-    font-size: 1.5em;
-    line-height: 100%;
-    width: 80%;
+    font-size: 1.3em;
+    line-height: 110%;
+    font-weight: 600;
+    letter-spacing: -0.5px;
 
     max-height: 55px;
     overflow-y: hidden;
 }
 
 .poster #songArtist {
-  font-size: 0.5em;
+  font-size: 0.7em;
+    font-weight: 400;
 }
 
 .poster .overlay {
@@ -72,6 +92,10 @@ h1,h2,h3,h4,h5,h6 {
     height: 110%;
     position: relative;
     z-index: 5;
+    display: grid;
+    grid-template-columns: 3fr 7fr;
+    column-gap: 30px;
+    text-align: left;
 }
 
 #posterBG {
@@ -94,8 +118,9 @@ h1,h2,h3,h4,h5,h6 {
     text-align: right;
     font-size: 1.5em;
     background: #ffffff;
-    border-radius: 0 0 10px 10px;
+    border-radius: 10px;
     padding: 10px 0;
+    box-shadow: rgba(0,0,0,0.1) 0 -10px 20px;
 
     /*display: grid;*/
     /*grid-template-columns: 6fr 4fr;*/
@@ -129,21 +154,22 @@ h1,h2,h3,h4,h5,h6 {
 }
 
 .seeker {
-    width: 100%;
-    position: fixed;
-    top: 100px;
-    z-index: 20;
+    width: 80%;
+    margin: 0 0 0 6%;
+    position: relative;
+    top: -15px;
+    z-index: 20!important;
 }
 
 .seeker > #seekBar {
     width: 100%;
     margin: 0;
-    border-radius: 10px 10px 0 0;
+    border-radius: 20px;
 
     -webkit-appearance: none;
     width: 100%;
     height: 5px;
-    background: #d3d3d3;
+    background: rgba(0,0,0,0.2);
     outline: none;
     transition-duration: .2s;
     overflow: hidden;
@@ -157,7 +183,7 @@ h1,h2,h3,h4,h5,h6 {
     -webkit-appearance: none;
     width: 0px;
     height: 10px;
-    box-shadow: -100vw 0 0 100vw red;
+    box-shadow: -100vw 0 0 100vw #ff4c4c;
 }
 
 .seeker > #seekBar::-webkit-slider-thumb:after {
