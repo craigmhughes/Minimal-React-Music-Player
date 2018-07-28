@@ -13,18 +13,21 @@ class App extends Component {
             paused: true,
             music_dir: __dirname + "/src/",
             music_files: undefined,
-            current_song: 2,
+            current_song: 0,
             current_info: {
                 title: undefined,
                 artist: undefined
-            }
+            },
+            settings_open: false
         };
 
         this.readMusicFiles();
         // remote.BrowserWindow.getFocusedWindow().setAlwaysOnTop(true);
 
         // Call DOM effects in this method.
-        this.checkWindow();
+        if(this.state.music_files !== null) {
+            this.checkWindow();
+        }
     }
 
     checkWindow(){
@@ -69,7 +72,10 @@ class App extends Component {
 
         // Set music files to the read directory
         this.state.music_files = musicfiles;
-        this.readTrack();
+
+        if(musicfiles > 0) {
+            this.readTrack();
+        }
     }
 
     readTrack(){
@@ -162,14 +168,16 @@ class App extends Component {
     }
 
     checkTitle(){
-        setTimeout(()=> {
-            this.state.current_info.title = this.state.current_info.title.length >= 25 ?
-                this.state.current_info.title.substring(0, 22) + "..." :
-                this.state.current_info.title;
+        if(this.state.current_info.title !== undefined) {
+            setTimeout(() => {
+                this.state.current_info.title = this.state.current_info.title.length >= 25 ?
+                    this.state.current_info.title.substring(0, 22) + "..." :
+                    this.state.current_info.title;
 
-            console.log(this.state.current_info.title);
-            this.forceUpdate();
-        });
+                console.log(this.state.current_info.title);
+                this.forceUpdate();
+            }, 1000);
+        }
     }
 
     setTrackPoint(value){
@@ -211,21 +219,57 @@ class App extends Component {
         }
     }
 
+    getSettings(){
+        this.state.settings_open = !this.state.settings_open;
+        this.forceUpdate();
+
+        if(this.state.settings_open){
+            setTimeout(()=>{
+                document.getElementById("settings").className = "open";
+            }, 100);
+
+        }
+    }
+
+    changeDirectory(){
+        this.state.music_dir = document.getElementById("ctrl").value.charAt(document.getElementById("ctrl").value.length) !== '/' ?
+            document.getElementById("ctrl").value + '/' : document.getElementById("ctrl").value;
+
+        console.log(document.getElementById("ctrl").value);
+        this.readMusicFiles();
+        this.readTrack();
+        this.forceUpdate();
+    }
+
     render(){
 
         return (
             <main className="App">
-                {/*<div id="windowBar">*/}
-                    {/*<i className="fas fa-circle" onClick={()=>{remote.BrowserWindow.getFocusedWindow().close()}}>{}</i>*/}
-                    {/*<i className="fas fa-window-minimize" onClick={()=>{remote.BrowserWindow.getFocusedWindow().minimize()}}>{}</i>*/}
-                {/*</div>*/}
+                { this.state.settings_open ?
+                    <div id="settings">
+                        <i className="fas fa-times" onClick={()=>{this.getSettings()}}>{}</i>
+                        <h1>Settings</h1>
+                        <br/>
+                        <p>Paste the file path to your music here:</p>
+                        <input type="text" id="ctrl"/>
+                        <button id="settingsSubmit" onClick={()=>{this.changeDirectory()}}>Done</button>
+                    </div>
+                : ""}
+
+                <div id="windowBar">
+                    <i className="fas fa-cog" onClick={()=>{this.getSettings()}}>{}</i>
+                    <i className="fas fa-window-minimize" onClick={()=>{remote.BrowserWindow.getFocusedWindow().minimize()}}>{}</i>
+                    <i className="fas fa-times" onClick={()=>{remote.BrowserWindow.getFocusedWindow().close()}}>{}</i>
+                </div>
                 <section className="player">
                     <section className="poster">
                         <div className="overlay">
                             <div className="container" style={{height: "100%", width: "100%"}}>
                                 <img id="albumArt" src={__dirname + "/src/imgs/null-album.png"}/>
                             </div>
+                            {this.state.current_info.title !== undefined ?
                             <div className="container" style={{paddingLeft: "20px"}}>
+
                                 <h1 id="songTitle">{this.state.current_info.title}<br/><span id="songArtist">{this.state.current_info.artist}</span>
                                     </h1>
 
@@ -238,6 +282,7 @@ class App extends Component {
                                     <p id="songDuration">0:00</p>
                                 </div>
                             </div>
+                                : <div id="nullDirectory"><p>No Music Found</p></div>}
                         </div>
                         <div id="posterBG">{}</div>
                     </section>
