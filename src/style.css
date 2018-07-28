@@ -1,7 +1,10 @@
 @import url('https://fonts.googleapis.com/css?family=Montserrat:400,600,800');
 
+/*Tag Stylings*/
+
 html, body {
     background: rgba(255, 255, 255, 0);
+    -webkit-app-region: drag;
 }
 
 body {
@@ -16,37 +19,43 @@ h1,h2,h3,h4,h5,h6 {
   margin: 0;
 }
 
-#windowBar {
-    height: 20px;
-    width: 100%;
-    position: fixed;
-    top: 0;
-    -webkit-app-region: drag;
-    color: #fff;
-
-    z-index: 20;
-    font-size: 0.7em;
-    padding: 5px 0 0 5px;
-}
-
-#windowBar i {
-    padding: 5px 2.5;
-    margin: 0 2.5px;
-    cursor: pointer;
-}
-
 .player {
-    height: 50px;
+    height: 0;
 }
+
+
+/*#windowBar {*/
+    /*height: 20px;*/
+    /*width: 100%;*/
+    /*position: fixed;*/
+    /*top: 0;*/
+    /*-webkit-app-region: drag;*/
+    /*color: #fff;*/
+
+    /*z-index: 20;*/
+    /*font-size: 0.7em;*/
+    /*padding: 5px 0 0 5px;*/
+/*}*/
+
+/*#windowBar i {*/
+    /*padding: 5px 2.5;*/
+    /*margin: 0 2.5px;*/
+    /*cursor: pointer;*/
+/*}*/
+
+
+/*-- Song Info Display --*/
 
 .player .poster {
+    -webkit-app-region: drag;
     width: 90%;
     height: 100px;
     margin-bottom: 20px;
     background: none;
     color: #222;
-    background: #e3e3e3;
+    background: #fff;
     font-size: 0.7em;
+    box-shadow: rgba(0,0,0,0.3) 0 0 15px;
 
     text-align: center;
     z-index: -1;
@@ -55,9 +64,10 @@ h1,h2,h3,h4,h5,h6 {
     position: relative;
 
     transition-duration: 0.5s;
-    top: 90px;
+    top: 20px;
 }
 
+/*Brings up Song info when hovering over app*/
 #root:hover .player .poster {
     position: relative;
     top: 20px;
@@ -66,13 +76,13 @@ h1,h2,h3,h4,h5,h6 {
 #albumArt {
     height: auto;
     width: 100%;
-    border-radius: 10px 0 0 0;
+    border-radius: 9px 0 0 0;
 
     z-index: 20;
 }
 
 .poster #songTitle {
-    padding: 20px 15px;
+    padding: 20px 15px 0 15px;
     font-size: 1.3em;
     line-height: 110%;
     font-weight: 600;
@@ -84,6 +94,11 @@ h1,h2,h3,h4,h5,h6 {
 
 .poster #songArtist {
   font-size: 0.7em;
+    font-weight: 400;
+}
+
+#songTime {
+    font-size: 0.7em;
     font-weight: 400;
 }
 
@@ -113,9 +128,74 @@ h1,h2,h3,h4,h5,h6 {
     background-position-y: 50%;
 }
 
-.player .controls {
-    width: 100%;
+#windowBar {
     text-align: right;
+    padding: 0 5px;
+}
+
+#windowBar i {
+    padding: 5px 2.5px;
+}
+
+/*-- Song Seeker Bar --*/
+
+#songSeek {
+    display: grid;
+    grid-template-columns: 30px 150px 30px;
+    margin-top: 0px;
+    margin-left: 10px;
+}
+
+#songSeek p {
+    font-size: 0.8em;
+    margin: 11px 0;
+    text-align: center;
+}
+
+.seeker {
+    width: 90%;
+    margin: 8px 5%;
+}
+
+.seeker > #seekBar {
+    width: 100%;
+    margin: 0;
+    border-radius: 20px;
+
+    -webkit-appearance: none;
+    width: 100%;
+    height: 5px;
+    background: rgba(0,0,0,0.2);
+    outline: none;
+    transition-duration: .2s;
+    overflow: hidden;
+    z-index: 20;
+}
+
+.seeker:hover  > #seekBar {
+    height: 8px;
+}
+
+.seeker > #seekBar::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 0px;
+    height: 10px;
+    box-shadow: -100vw 0 0 100vw #ff4c4c;
+}
+
+.seeker > #seekBar::-webkit-slider-thumb:after {
+    content: " ";
+    background: red;
+    padding: 30px;
+}
+
+
+/*-- Control Stylings --*/
+
+.player .controls {
+    -webkit-app-region: drag;
+    width: 100%;
+    text-align: left;
     font-size: 1.5em;
     background: #ffffff;
     border-radius: 10px;
@@ -132,6 +212,7 @@ h1,h2,h3,h4,h5,h6 {
 
 .player .controls .container {
     padding: 5px 15px;
+    display: inline-flex;
 }
 
 .player .controls i {
@@ -153,58 +234,22 @@ h1,h2,h3,h4,h5,h6 {
     color: rgba(0,0,0,0.15);
 }
 
-.seeker {
-    width: 80%;
-    margin: 0 0 0 6%;
-    position: relative;
-    top: -15px;
-    z-index: 20!important;
-}
-
-.seeker > #seekBar {
-    width: 100%;
-    margin: 0;
-    border-radius: 20px;
-
-    -webkit-appearance: none;
-    width: 100%;
-    height: 5px;
-    background: rgba(0,0,0,0.2);
-    outline: none;
-    transition-duration: .2s;
-    overflow: hidden;
-}
-
-.seeker:hover  > #seekBar {
-    height: 8px;
-}
-
-.seeker > #seekBar::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 0px;
-    height: 10px;
-    box-shadow: -100vw 0 0 100vw #ff4c4c;
-}
-
-.seeker > #seekBar::-webkit-slider-thumb:after {
-    content: " ";
-    background: red;
-    padding: 30px;
-}
+/*-- Volume Bar --*/
 
 #volumeBar {
+    -webkit-app-region: no-drag;
     -webkit-appearance: none;
     background: none;
     width: 100%;
 
     position: relative;
-    top: -10px;
+    top: -2px;
     outline: none;
+    opacity: 0;
 }
 
 #volume-counterpart {
-    display: none;
-    width: 80%;
+    width: 100px;
 }
 
 #vol-playtime {
@@ -213,12 +258,14 @@ h1,h2,h3,h4,h5,h6 {
     position: relative;
     top: 16px;
     left: 2px;
+    border-radius: 20px;
 }
 
 #vol-played {
-    background: red;
+    background: #ff4c4c;
     height: 100%;
     width: 0;
+    border-radius: 20px;
 }
 
 /*# sourceMappingURL=style.css.map */

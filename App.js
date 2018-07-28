@@ -31,9 +31,29 @@ class App extends Component {
         window.addEventListener("load", ()=>{
             this.setVolume();
             this.checkTitle();
+
+            let audio = document.getElementById("audio");
+            audio.addEventListener("timeupdate", function() {
+                let s = Math.floor(parseInt(audio.currentTime % 60));
+                let m = Math.floor(parseInt((audio.currentTime / 60) % 60));
+
+                document.getElementById("songTime").innerText = s < 10 ? m + ':0' + s : m + ':' + s;
+            }, false);
+
+            this.readAudioTime();
+
             // Re-render elms dependent on state results
             this.forceUpdate();
         });
+    }
+
+    readAudioTime(){
+        setTimeout(()=>{
+            let audio = document.getElementById("audio");
+            let s = Math.floor(parseInt(audio.duration % 60));
+            let m = Math.floor(parseInt((audio.duration / 60) % 60));
+            document.getElementById("songDuration").innerText = s < 10 ? m + ':0' + s : m + ':' + s;
+        }, 1000);
     }
 
     // Read chosen Music Directory and push MP3 files to state array -- Do once.
@@ -106,6 +126,7 @@ class App extends Component {
         let audio = document.getElementById("audio");
         audio.src = this.state.music_dir + this.state.music_files[this.state.current_song];
         this.playAudio();
+        this.readAudioTime();
     }
 
 
@@ -137,6 +158,7 @@ class App extends Component {
 
         this.readTrack();
         this.checkTitle();
+        this.readAudioTime();
     }
 
     checkTitle(){
@@ -172,10 +194,12 @@ class App extends Component {
             setInterval(() => {
                 document.getElementById("seekBar").value = (audio.currentTime / audio.duration) * 100;
                 document.getElementById("volumeBar").value = audio.volume * 100;
+
                 if (audio.currentTime >= audio.duration) {
                     if(this.state.current_song === this.state.music_files.length - 1) {
                         this.state.paused = true;
                         document.getElementById("play-button").className = "fas fa-play";
+
                         clearInterval();
                     } else {
                         this.skipTrack(true);
@@ -191,10 +215,10 @@ class App extends Component {
 
         return (
             <main className="App">
-                <div id="windowBar">
-                    <i className="fas fa-circle" onClick={()=>{remote.BrowserWindow.getFocusedWindow().close()}}>{}</i>
-                    <i className="fas fa-window-minimize" onClick={()=>{remote.BrowserWindow.getFocusedWindow().minimize()}}>{}</i>
-                </div>
+                {/*<div id="windowBar">*/}
+                    {/*<i className="fas fa-circle" onClick={()=>{remote.BrowserWindow.getFocusedWindow().close()}}>{}</i>*/}
+                    {/*<i className="fas fa-window-minimize" onClick={()=>{remote.BrowserWindow.getFocusedWindow().minimize()}}>{}</i>*/}
+                {/*</div>*/}
                 <section className="player">
                     <section className="poster">
                         <div className="overlay">
@@ -202,11 +226,17 @@ class App extends Component {
                                 <img id="albumArt" src={__dirname + "/src/imgs/null-album.png"}/>
                             </div>
                             <div className="container" style={{paddingLeft: "20px"}}>
-                                <h1 id="songTitle">{this.state.current_info.title}<br/><span id="songArtist">{this.state.current_info.artist}</span></h1>
-                                <section className="seeker">
-                                    <input type="range" min="0" max="100" step="1" defaultValue="0"
-                                           onChange={()=>{this.setTrackPoint(document.getElementById("seekBar").value);}} id="seekBar">{}</input>
-                                </section>
+                                <h1 id="songTitle">{this.state.current_info.title}<br/><span id="songArtist">{this.state.current_info.artist}</span>
+                                    </h1>
+
+                                <div id="songSeek">
+                                    <p id="songTime">0:00</p>
+                                    <section className="seeker">
+                                        <input type="range" min="0" max="100" step="1" defaultValue="0"
+                                               onChange={()=>{this.setTrackPoint(document.getElementById("seekBar").value);}} id="seekBar">{}</input>
+                                    </section>
+                                    <p id="songDuration">0:00</p>
+                                </div>
                             </div>
                         </div>
                         <div id="posterBG">{}</div>
@@ -223,7 +253,7 @@ class App extends Component {
                             <i className={this.state.current_song < this.state.music_files.length - 1? "fa fa-chevron-right" : "fa fa-chevron-right limit"}
                                onClick={()=>{if (this.state.current_song < this.state.music_files.length - 1) {this.skipTrack(true)}}}>{}</i>
                         </div>
-                        <div>
+                        <div className="container">
                             <div id="volume-counterpart">
                                 <div id="vol-playtime"><div id="vol-played">{}</div></div>
                                 <input type="range" min="0" max="100" step="1" defaultValue="50" onChange={()=>{this.setVolume()}} id="volumeBar"/>
