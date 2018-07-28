@@ -100,12 +100,14 @@ class App extends Component {
                 let datajpg = "data:image/jpg;base64," + b64encoded;
 
                 document.getElementById("albumArt").src = datajpg;
-                document.getElementById("posterBG").style.backgroundImage = `url(${datajpg})`;
+                // document.getElementById("posterBG").style.backgroundImage = `url(${datajpg})`;
             } else {
                 document.getElementById("albumArt").src = __dirname + "/src/imgs/null-album.png";
                 document.getElementById("posterBG").style.backgroundImage = 'none';
             }
         });
+
+
 
         let audio = document.getElementById("audio");
         audio.src = this.state.music_dir + this.state.music_files[this.state.current_song];
@@ -126,7 +128,7 @@ class App extends Component {
 
     togglePlay(){
         this.state.paused = !this.state.paused;
-        document.getElementById("play-button").className = !this.state.paused ? "far fa-pause-circle" : "far fa-play-circle";
+        document.getElementById("play-button").className = !this.state.paused ? "fas fa-pause" : "fas fa-play";
         this.playAudio();
         this.getTrackPoint();
     }
@@ -166,7 +168,7 @@ class App extends Component {
                 if (audio.currentTime >= audio.duration) {
                     if(this.state.current_song === this.state.music_files.length - 1) {
                         this.state.paused = true;
-                        document.getElementById("play-button").className = "far fa-play-circle";
+                        document.getElementById("play-button").className = "fas fa-play";
                         clearInterval();
                     } else {
                         this.skipTrack(true);
@@ -200,11 +202,11 @@ class App extends Component {
                     </section>
 
                     <section className="controls">
-                        <div>
+                        <div className="container">
                             <i className={this.state.current_song > 0 ? "fa fa-chevron-left" : "fa fa-chevron-left limit"}
                                onClick={()=>{if (this.state.current_song > 0) {this.skipTrack(false)}}}>{}</i>
 
-                            <i className={!this.state.paused ? "far fa-pause-circle" : "far fa-play-circle"}
+                            <i className={!this.state.paused ? "fas fa-pause" : "fas fa-play"}
                                onClick={()=>{this.togglePlay()}} id="play-button">{}</i>
 
                             <i className={this.state.current_song < this.state.music_files.length - 1? "fa fa-chevron-right" : "fa fa-chevron-right limit"}
