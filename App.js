@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import settings from './src/settings.json';
 
 const NodeID3 = require('node-id3');
 const { remote } = require('electron');
@@ -52,15 +53,33 @@ class App extends Component {
 
     readAudioTime(){
         setTimeout(()=>{
-            let audio = document.getElementById("audio");
-            let s = Math.floor(parseInt(audio.duration % 60));
-            let m = Math.floor(parseInt((audio.duration / 60) % 60));
-            document.getElementById("songDuration").innerText = s < 10 ? m + ':0' + s : m + ':' + s;
+            if(document.getElementById("songDuration") !== null) {
+                let audio = document.getElementById("audio");
+                let s = Math.floor(parseInt(audio.duration % 60));
+                let m = Math.floor(parseInt((audio.duration / 60) % 60));
+                document.getElementById("songDuration").innerText = s < 10 ? m + ':0' + s : m + ':' + s;
+            }
         }, 1000);
     }
 
     // Read chosen Music Directory and push MP3 files to state array -- Do once.
     readMusicFiles(){
+        let dir = settings.dir;
+
+        if(settings.dir !== null){
+            // Append and Prepend Slashes where needed.
+            dir = settings.dir.charAt(settings.dir.length-1) !== "/" ? settings.dir + "/" : settings.dir;
+            dir = dir.charAt(0) !== "/" && dir.charAt(0) !== "." ?
+                "/" + dir : dir;
+
+            if(!(fs.existsSync(dir))){
+                this.state.music_dir = __dirname + '/src/music/';
+            } else {
+                this.state.music_dir = dir;
+            }
+
+        }
+
         let files = fs.readdirSync(this.state.music_dir);
         let musicfiles = [];
 
@@ -73,9 +92,8 @@ class App extends Component {
         // Set music files to the read directory
         this.state.music_files = musicfiles;
 
-        if(musicfiles > 0) {
+        if (this.state.music_files.length > 0)
             this.readTrack();
-        }
     }
 
     readTrack(){
@@ -221,44 +239,64 @@ class App extends Component {
 
     getSettings(){
         this.state.settings_open = !this.state.settings_open;
-        this.forceUpdate();
+        // this.forceUpdate();
 
         if(this.state.settings_open){
             setTimeout(()=>{
                 document.getElementById("settings").className = "open";
             }, 100);
 
+        } else {
+            setTimeout(()=>{
+                document.getElementById("settings").className = "closed";
+            }, 100);
         }
     }
 
     changeDirectory(){
-        this.state.music_dir = document.getElementById("ctrl").value.charAt(document.getElementById("ctrl").value.length) !== '/' ?
-            document.getElementById("ctrl").value + '/' : document.getElementById("ctrl").value;
+        if(document.getElementById("ctrl").value.length > 0) {
+            this.state.music_dir = document.getElementById("ctrl").value.charAt(document.getElementById("ctrl").value.length) !== '/' ?
+                document.getElementById("ctrl").value + '/' : document.getElementById("ctrl").value;
 
-        console.log(document.getElementById("ctrl").value);
-        this.readMusicFiles();
-        this.readTrack();
-        this.forceUpdate();
+            this.state.music_dir = document.getElementById("ctrl").value.charAt(0) !== '/' ? "/" + document.getElementById("ctrl").value :
+                document.getElementById("ctrl").value;
+
+            let json = {
+                dir: document.getElementById("ctrl").value
+            };
+
+            console.log(settings);
+
+            fs.writeFile('./src/settings.json', JSON.stringify(json), (err) => {
+                console.log(err);
+            });
+
+            remote.BrowserWindow.getFocusedWindow().reload();
+        }
+
+        this.getSettings();
     }
 
     render(){
 
         return (
             <main className="App">
-                { this.state.settings_open ?
-                    <div id="settings">
-                        <i className="fas fa-times" onClick={()=>{this.getSettings()}}>{}</i>
-                        <h1>Settings</h1>
-                        <br/>
-                        <p>Paste the file path to your music here:</p>
+                <div id="settings" className={this.state.settings_open ? "open" : "closed"}>
+                    <i className="fas fa-times" onClick={()=>{this.getSettings()}}>{}</i>
+                    <h1>Settings</h1>
+
+                    <div className="list-container">
+                        <p>Paste your music directory here:</p>
                         <input type="text" id="ctrl"/>
-                        <button id="settingsSubmit" onClick={()=>{this.changeDirectory()}}>Done</button>
                     </div>
-                : ""}
+
+                    <br/>
+                    <button id="settingsSubmit" onClick={()=>{this.changeDirectory()}}>Done</button>
+                </div>
 
                 <div id="windowBar">
                     <i className="fas fa-cog" onClick={()=>{this.getSettings()}}>{}</i>
-                    <i className="fas fa-window-minimize" onClick={()=>{remote.BrowserWindow.getFocusedWindow().minimize()}}>{}</i>
+                    {/*<i className="fas fa-window-minimize" onClick={()=>{remote.BrowserWindow.getFocusedWindow().minimize()}}>{}</i>*/}
                     <i className="fas fa-times" onClick={()=>{remote.BrowserWindow.getFocusedWindow().close()}}>{}</i>
                 </div>
                 <section className="player">
