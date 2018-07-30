@@ -10,7 +10,8 @@ app.on('ready', function(){
     mainWindow = new BrowserWindow({
         resizable: false,
         frame: false,
-        transparent: true
+        transparent: true,
+        hasShadow: false
     });
 
     mainWindow.loadURL(url.format({
@@ -19,6 +20,6 @@ app.on('ready', function(){
         slashes: true
     }));
 
-    mainWindow.setSize(400,210);
+    mainWindow.setSize(400,310);
 });
 

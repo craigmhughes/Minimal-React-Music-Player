@@ -4,6 +4,7 @@ import settings from './src/settings.json';
 const NodeID3 = require('node-id3');
 const { remote } = require('electron');
 const fs = require('fs');
+const http = require('http');
 
 
 class App extends Component {
@@ -16,6 +17,10 @@ class App extends Component {
             music_files: undefined,
             current_song: 0,
             current_info: {
+                title: undefined,
+                artist: undefined
+            },
+            origin_info: {
                 title: undefined,
                 artist: undefined
             },
@@ -108,6 +113,10 @@ class App extends Component {
                     current_info: {
                         title: resp.title,
                         artist: resp.artist
+                    },
+                    origin_info: {
+                        title: resp.title,
+                        artist: resp.artist
                     }
                 });
 
@@ -122,11 +131,19 @@ class App extends Component {
                     current_info: {
                         title: details[1],
                         artist: details[0]
+                    },
+                    origin_info: {
+                        title: details[1],
+                        artist: details[0]
                     }
                 });
             } else {
                 this.setState({
                     current_info: {
+                        title: songname.replace(".mp3",""),
+                        artist: "Unknown Artist"
+                    },
+                    origin_info: {
                         title: songname.replace(".mp3",""),
                         artist: "Unknown Artist"
                     }
@@ -139,10 +156,10 @@ class App extends Component {
                 let b64encoded = btoa(String.fromCharCode.apply(null, getImageResult.imageBuffer));
                 let datajpg = "data:image/jpg;base64," + b64encoded;
 
-                document.getElementById("albumArt").src = datajpg;
+                document.getElementById("albumArt").style.backgroundImage = `url(${datajpg})`;
                 // document.getElementById("posterBG").style.backgroundImage = `url(${datajpg})`;
             } else {
-                document.getElementById("albumArt").src = __dirname + "/src/imgs/null-album.png";
+                document.getElementById("albumArt").style.backgroundImage = `url(${__dirname + "/src/imgs/null-album.png"})`;
                 document.getElementById("posterBG").style.backgroundImage = 'none';
             }
         });
@@ -239,6 +256,7 @@ class App extends Component {
 
     getSettings(){
         this.state.settings_open = !this.state.settings_open;
+        console.log("here");
         // this.forceUpdate();
 
         if(this.state.settings_open){
@@ -253,16 +271,18 @@ class App extends Component {
         }
     }
 
-    changeDirectory(){
-        if(document.getElementById("ctrl").value.length > 0) {
-            this.state.music_dir = document.getElementById("ctrl").value.charAt(document.getElementById("ctrl").value.length) !== '/' ?
-                document.getElementById("ctrl").value + '/' : document.getElementById("ctrl").value;
+    changeSettings(){
 
-            this.state.music_dir = document.getElementById("ctrl").value.charAt(0) !== '/' ? "/" + document.getElementById("ctrl").value :
-                document.getElementById("ctrl").value;
+        // Directory Changes
+        if(document.getElementById("directoryInput").value.length > 0) {
+            this.state.music_dir = document.getElementById("directoryInput").value.charAt(document.getElementById("directoryInput").value.length) !== '/' ?
+                document.getElementById("directoryInput").value + '/' : document.getElementById("directoryInput").value;
+
+            this.state.music_dir = document.getElementById("directoryInput").value.charAt(0) !== '/' ? "/" + document.getElementById("directoryInput").value :
+                document.getElementById("directoryInput").value;
 
             let json = {
-                dir: document.getElementById("ctrl").value
+                dir: document.getElementById("directoryInput").value
             };
 
             console.log(settings);
@@ -270,10 +290,66 @@ class App extends Component {
             fs.writeFile('./src/settings.json', JSON.stringify(json), (err) => {
                 console.log(err);
             });
-
-            remote.BrowserWindow.getFocusedWindow().reload();
         }
 
+        if(document.getElementById("thumbInput").value.length > 0) {
+            if(document.getElementById("thumbInput").value.includes("youtu.be")){
+
+                // Get Usable Image string
+                let stringLink = document.getElementById("thumbInput").value;
+                stringLink = stringLink.substr(17,stringLink.length);
+
+                // Music File
+                let file = this.state.music_dir + this.state.music_files[this.state.current_song];
+
+                let musicfile = fs.createWriteStream("./src/skull.jpg");
+                // let request = http.get("http://img.youtube.com/vi/" + "k9AYOOYvbmM" + "/0.jpg", function(response) {
+                //     response.pipe(musicfile);
+                // });
+
+                const request = require('request');
+
+                let download = function(uri, filename, callback){
+                    request.head(uri, function(err, res, body){
+                        console.log('content-type:', res.headers['content-type']);
+                        console.log('content-length:', res.headers['content-length']);
+
+                        request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
+                    });
+                };
+
+                download("http://img.youtube.com/vi/" + stringLink + "/0.jpg", './src/music.jpg', function(){
+                    console.log('done');
+                });
+
+                let tags = {
+                    image: "./src/music.jpg"
+                };
+
+                // let success = NodeID3.write(tags, file); //  Returns true/false or, if buffer passed as file, the tagged buffer
+                // console.log(success);
+                setTimeout(()=> {
+                    NodeID3.create(tags, function (frame) {
+                    });
+                    NodeID3.update(tags, file, function (err, buffer) {
+                        console.log(err);
+                    });
+
+                    NodeID3.read(file, function (err, tags) {
+                        console.log(tags);
+                    });
+
+                    console.log(this.state.music_dir + this.state.music_files[this.state.current_song]);
+                },1000);
+            }
+        }
+
+        setTimeout(()=> {
+        if(document.getElementById("thumbInput").value.length > 0 || document.getElementById("directoryInput").value.length > 0){
+            remote.BrowserWindow.getFocusedWindow().reload();
+        }},1500);
+
+        this.forceUpdate();
         this.getSettings();
     }
 
@@ -287,11 +363,14 @@ class App extends Component {
 
                     <div className="list-container">
                         <p>Paste your music directory here:</p>
-                        <input type="text" id="ctrl"/>
+                        <input type="text" id="directoryInput" placeholder={this.state.music_dir}/>
+                    </div>
+                    <div className="list-container">
+                        <p>Paste your shortened YouTube link here to add album art</p>
+                        <input type="text" id="thumbInput" placeholder="example: https://youtu.be/jDa2zmvp3ww"/>
                     </div>
 
-                    <br/>
-                    <button id="settingsSubmit" onClick={()=>{this.changeDirectory()}}>Done</button>
+                    <button id="settingsSubmit" onClick={()=>{this.changeSettings()}}>Done</button>
                 </div>
 
                 <div id="windowBar">
@@ -303,7 +382,7 @@ class App extends Component {
                     <section className="poster">
                         <div className="overlay">
                             <div className="container" style={{height: "100%", width: "100%"}}>
-                                <img id="albumArt" src={__dirname + "/src/imgs/null-album.png"}/>
+                                <div id="albumArt" style={{background: `url(${__dirname + "/src/imgs/null-album.png"})`}}/>
                             </div>
                             {this.state.current_info.title !== undefined ?
                             <div className="container" style={{paddingLeft: "20px"}}>

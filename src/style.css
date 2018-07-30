@@ -73,9 +73,12 @@ h1,h2,h3,h4,h5,h6 {
 }
 
 #albumArt {
-    height: auto;
+    height: 100%;
     width: 100%;
     border-radius: 9px 0 0 0;
+    background-size: 200%!important;
+    background-position-y: 60%!important;
+    background-position-x: 50%!important;
 
     z-index: 20;
 }
@@ -316,7 +319,7 @@ h1,h2,h3,h4,h5,h6 {
     color: grey;
 
     opacity: 0;
-    top: -200px;
+    top: -400px;
     transition-duration: 0.5s;
 }
 
@@ -327,7 +330,7 @@ h1,h2,h3,h4,h5,h6 {
 
 #settings.closed {
     opacity: 0;
-    top: -200px;
+    top: -400px;
 }
 
 #settings h1 {
@@ -355,14 +358,19 @@ h1,h2,h3,h4,h5,h6 {
     border: none;
     background: #e3e3e3;
     border-radius: 10px;
-    padding: 5px 10px;
-    color: grey;
+    padding: 10px;
+    color: darkgray;
     width: calc(100% - 10px);
     text-align: center;
+    font-size: 0.6em;
+}
+
+#settings input::placeholder {
+    color: rgba(0,0,0,0.3);
 }
 
 #settings p {
-    font-size: 0.6em;
+    font-size: 0.65em;
     line-height: 130%;
     width: 100%;
 }
@@ -380,10 +388,14 @@ h1,h2,h3,h4,h5,h6 {
     background: #ff4c4c;
     color: #fff;
     border: none;
-    padding: 5px 15px;
+    padding: 5px 30px;
     border-radius: 15px;
     outline: none;
     cursor: pointer;
+}
+
+#settings .list-container {
+    margin: 10px 0;
 }
 
 /*# sourceMappingURL=style.css.map */
