@@ -157,10 +157,11 @@ class App extends Component {
                 let datajpg = "data:image/jpg;base64," + b64encoded;
 
                 document.getElementById("albumArt").style.backgroundImage = `url(${datajpg})`;
+                document.getElementById("albumArt").className = '';
                 // document.getElementById("posterBG").style.backgroundImage = `url(${datajpg})`;
             } else {
                 document.getElementById("albumArt").style.backgroundImage = `url(${__dirname + "/src/imgs/null-album.png"})`;
-                document.getElementById("posterBG").style.backgroundImage = 'none';
+                document.getElementById("albumArt").className = 'nullart';
             }
         });
 

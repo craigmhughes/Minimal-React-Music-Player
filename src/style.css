@@ -48,7 +48,7 @@ h1,h2,h3,h4,h5,h6 {
 
 .player .poster {
     -webkit-app-region: drag;
-    width: 90%;
+    width: 360px;
     height: 100px;
     margin-bottom: 20px;
     background: none;
@@ -65,6 +65,7 @@ h1,h2,h3,h4,h5,h6 {
 
     transition-duration: 0.5s;
     top: 90px;
+    left: 20px;
 }
 
 /*Brings up Song info when hovering over app*/
@@ -81,6 +82,10 @@ h1,h2,h3,h4,h5,h6 {
     background-position-x: 50%!important;
 
     z-index: 20;
+}
+
+#albumArt.nullart {
+    background-size: cover!important;
 }
 
 .poster #songTitle {
@@ -137,7 +142,7 @@ h1,h2,h3,h4,h5,h6 {
     padding: 0;
 
     position: fixed;
-    right: 20px;
+    right: 47px;
     top: 90px;
     font-size: 0.7em;
     transition-duration: 0.5s;
@@ -218,19 +223,20 @@ h1,h2,h3,h4,h5,h6 {
 
 .player .controls {
     -webkit-app-region: drag;
-    width: 100%;
+    width: 400px;
     text-align: left;
     font-size: 1.5em;
     background: #ffffff;
     border-radius: 10px;
     padding: 10px 0;
-    box-shadow: rgba(0,0,0,0.1) 0 -10px 20px;
+    box-shadow: rgba(0,0,0,0.2) 0 0 20px;
 
     /*display: grid;*/
     /*grid-template-columns: 6fr 4fr;*/
 
     position: fixed;
     top: 110px;
+    left: 25px;
     z-index: 10;
 }
 
