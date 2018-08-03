@@ -158,6 +158,7 @@ class App extends Component {
 
                 document.getElementById("albumArt").style.backgroundImage = `url(${datajpg})`;
                 document.getElementById("albumArt").className = '';
+                // document.getElementById("posterBG").style.backgroundImage = `url(${datajpg})`;
             } else {
                 document.getElementById("albumArt").style.backgroundImage = `url(${__dirname + "/src/imgs/null-album.png"})`;
                 document.getElementById("albumArt").className = 'nullart';
@@ -209,7 +210,7 @@ class App extends Component {
                     this.state.current_info.title.substring(0, 22) + "..." :
                     this.state.current_info.title;
 
-                // console.log(this.state.current_info.title);
+                console.log(this.state.current_info.title);
                 this.forceUpdate();
             }, 1000);
         }
@@ -256,6 +257,7 @@ class App extends Component {
 
     getSettings(){
         this.state.settings_open = !this.state.settings_open;
+        console.log("here");
         // this.forceUpdate();
 
         if(this.state.settings_open){
@@ -284,7 +286,7 @@ class App extends Component {
                 dir: document.getElementById("directoryInput").value
             };
 
-            // console.log(settings);
+            console.log(settings);
 
             fs.writeFile('./src/settings.json', JSON.stringify(json), (err) => {
                 console.log(err);
@@ -310,15 +312,15 @@ class App extends Component {
 
                 let download = function(uri, filename, callback){
                     request.head(uri, function(err, res, body){
-                        // console.log('content-type:', res.headers['content-type']);
-                        // console.log('content-length:', res.headers['content-length']);
+                        console.log('content-type:', res.headers['content-type']);
+                        console.log('content-length:', res.headers['content-length']);
 
                         request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
                     });
                 };
 
                 download("http://img.youtube.com/vi/" + stringLink + "/0.jpg", './src/music.jpg', function(){
-                    // console.log('done');
+                    console.log('done');
                 });
 
                 let tags = {
@@ -334,9 +336,11 @@ class App extends Component {
                         console.log(err);
                     });
 
-                    // NodeID3.read(file, function (err, tags) {
-                    //     console.log(tags);
-                    // });
+                    NodeID3.read(file, function (err, tags) {
+                        console.log(tags);
+                    });
+
+                    console.log(this.state.music_dir + this.state.music_files[this.state.current_song]);
                 },1000);
             }
         }
