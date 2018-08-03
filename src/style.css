@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800');
+@import url('https://fonts.googleapis.com/css?family=Barlow+Semi+Condensed:400,700');
 
 /*Tag Stylings*/
 
@@ -10,7 +11,7 @@ html, body {
 body {
     margin: 0;
     background: none;
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Barlow Semi Condensed', sans-serif;
     overflow-y: hidden;
 }
 
@@ -49,10 +50,10 @@ h1,h2,h3,h4,h5,h6 {
 .player .poster {
     -webkit-app-region: drag;
     width: 360px;
-    height: 100px;
+    height: 200px;
     margin-bottom: 20px;
     background: none;
-    color: #222;
+    color: #828181;
     background: #fff;
     font-size: 0.7em;
     box-shadow: rgba(0,0,0,0.3) 0 0 15px;
@@ -64,46 +65,49 @@ h1,h2,h3,h4,h5,h6 {
     position: relative;
 
     transition-duration: 0.5s;
-    top: 90px;
+    top: 0px;
     left: 20px;
 }
 
 /*Brings up Song info when hovering over app*/
-#root:hover .player .poster, #root:hover #windowBar {
-    top: 20px;
-}
+/*#root:hover .player .poster, #root:hover #windowBar {*/
+    /*top: 20px;*/
+/*}*/
 
-#albumArt {
-    height: 100%;
-    width: 100%;
-    border-radius: 9px 0 0 0;
-    background-size: 200%!important;
-    background-position-y: 60%!important;
-    background-position-x: 50%!important;
-
-    z-index: 20;
-}
-
-#albumArt.nullart {
-    background-size: cover!important;
+.poster p:first-child {
+    margin: 15px 5px 5px 5px;
+    font-weight: 400;
 }
 
 .poster #songTitle {
-    padding: 25px 0 0 15px;
+    padding: 0px 0 0 15px;
     position: relative;
     left: -10px;
     font-size: 1.3em;
-    line-height: 110%;
+    line-height: 120%;
     font-weight: 600;
-    letter-spacing: -0.5px;
+    letter-spacing: 0px;
 
     max-height: 55px;
     overflow-y: hidden;
 }
 
+.poster #songTitle > i.fa-heart {
+    margin: 0 10px;
+    font-size: 0.95em;
+    cursor: pointer;
+}
+
+.poster #songTitle > i.fas.fa-heart {
+    color: #ff4c4c;
+}
+
+.poster #songTitle > i.far.fa-heart {
+    color: #828181;
+}
+
 .poster #songArtist {
-  font-size: 0.7em;
-    font-weight: 400;
+  font-size: 0.9em;
 }
 
 #songTime {
@@ -116,10 +120,21 @@ h1,h2,h3,h4,h5,h6 {
     height: 110%;
     position: relative;
     z-index: 5;
-    display: grid;
-    grid-template-columns: 3fr 7fr;
+    /*display: grid;*/
+    /*grid-template-columns: 3fr 7fr;*/
     column-gap: 30px;
     text-align: left;
+}
+
+#songInfo {
+    transition-duration: 0.7s;
+    position: relative;
+    top: 0;
+}
+
+.poster > .overlay > #songInfo .container {
+    padding: 2px 20px;
+    width: calc(100% - 40px);
 }
 
 #posterBG {
@@ -142,24 +157,22 @@ h1,h2,h3,h4,h5,h6 {
     padding: 0;
 
     position: fixed;
-    right: 47px;
-    top: 90px;
+    right: 107px;
+    top: 5px;
     font-size: 0.7em;
     transition-duration: 0.5s;
+    color: #828181;
 }
 
 #windowBar i {
-    padding: 5px 7.5px;
+    padding: 5px 5px;
 }
 
 #windowBar .fa-times {
-    background: #222;
-    color: #fff;
     border-radius: 0 9px 0 8px;
 }
 
 #windowBar .fa-window-minimize {
-    color: #333;
     font-size: 0.9em;
 }
 
@@ -168,8 +181,8 @@ h1,h2,h3,h4,h5,h6 {
 
 #songSeek {
     display: grid;
-    grid-template-columns: 30px 150px 30px;
-    margin-top: -5px;
+    grid-template-columns: 30px 270px 30px;
+    /*margin-top: -5px;*/
 }
 
 #songSeek p {
@@ -227,15 +240,15 @@ h1,h2,h3,h4,h5,h6 {
     text-align: left;
     font-size: 1.5em;
     background: #ffffff;
-    border-radius: 10px;
+    border-radius: 30px;
     padding: 10px 0;
     box-shadow: rgba(0,0,0,0.2) 0 0 20px;
 
-    /*display: grid;*/
-    /*grid-template-columns: 6fr 4fr;*/
+    display: grid;
+    grid-template-columns: 6fr 4fr;
 
     position: fixed;
-    top: 110px;
+    top: 150px;
     left: 25px;
     z-index: 10;
 }
@@ -243,6 +256,49 @@ h1,h2,h3,h4,h5,h6 {
 .player .controls .container {
     padding: 5px 15px;
     display: inline-flex;
+}
+
+#albumArt {
+    height: 130px;
+    width: 130px;
+    border-radius: 50%;
+    background-size: 200%!important;
+    background-position-y: 60%!important;
+    background-position-x: 50%!important;
+
+    z-index: 20;
+    position: absolute;
+    top: -50px;
+    left: 35px;
+
+    box-shadow: 0 20px 30px rgba(0,0,0,0.5);
+    transition-duration: 0.7s;
+}
+
+#albumArt.nullart {
+    background-size: cover!important;
+}
+
+#albumOverlay {
+    height: 130px;
+    width: 130px;
+
+    background-size: 100%!important;
+    border-radius: 50%;
+}
+
+#albumOverlay > p {
+    margin: 0;
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 7px;
+    text-align: center;
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    font-weight: 700;
+    text-shadow: 0 0 3px rgba(0,0,0,0.8);
+
+    position: relative;
+    top: 22px;
 }
 
 .player .controls i {
@@ -278,8 +334,20 @@ h1,h2,h3,h4,h5,h6 {
     opacity: 0;
 }
 
+#volumeSection .fa-volume-up {
+    position: relative;
+    left: 190px;
+    top: 12px;
+
+    font-size: 1.3em;
+}
+
 #volume-counterpart {
+    text-align: right;
     width: 100px;
+    float: right;
+    position: relative;
+    right: 35px;
 }
 
 #vol-playtime {

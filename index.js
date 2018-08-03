@@ -20,6 +20,6 @@ app.on('ready', function(){
         slashes: true
     }));
 
-    mainWindow.setSize(450,310);
+    mainWindow.setSize(500,310);
 });
 
