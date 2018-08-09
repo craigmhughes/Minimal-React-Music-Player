@@ -26,7 +26,8 @@ class App extends Component {
             },
             settings_open: false,
             favourites: [],
-            is_hearted: false
+            is_hearted: false,
+            tracks: []
         };
 
         this.readMusicFiles();
@@ -109,6 +110,7 @@ class App extends Component {
 
         if (this.state.music_files.length > 0)
             this.readTrack();
+
     }
 
     readTrack(){
@@ -209,13 +211,7 @@ class App extends Component {
 
     // Skip track forward/back based on ford val.
     skipTrack(ford){
-
-        // document.getElementById("songInfo").style.opacity = "0";
-        // document.getElementById("songInfo").style.top = "5px";
-        //
-        // document.getElementById("albumArt").style.opacity = "0";
-        // document.getElementById("albumArt").style.top = "-70px";
-
+        
         setTimeout(()=>{
 
             if(ford) {
@@ -240,14 +236,6 @@ class App extends Component {
             this.checkTitle();
             this.readAudioTime();
         }, 500);
-
-        // setTimeout(()=>{
-        //     document.getElementById("songInfo").style.opacity = "1";
-        //     document.getElementById("songInfo").style.top = "0px";
-        //
-        //     document.getElementById("albumArt").style.opacity = "1";
-        //     document.getElementById("albumArt").style.top = "-50px";
-        // },1600);
     }
 
     checkTitle(){
