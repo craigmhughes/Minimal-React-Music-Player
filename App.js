@@ -211,7 +211,17 @@ class App extends Component {
 
     // Skip track forward/back based on ford val.
     skipTrack(ford){
+<<<<<<< HEAD
         
+=======
+
+        document.getElementById("songInfo").style.opacity = "0";
+        document.getElementById("songInfo").style.top = "5px";
+
+        document.getElementById("albumArt").style.opacity = "0";
+        document.getElementById("albumArt").style.top = "-70px";
+
+>>>>>>> parent of b643e112... Disabled Track Skip Animation
         setTimeout(()=>{
 
             if(ford) {
@@ -236,6 +246,17 @@ class App extends Component {
             this.checkTitle();
             this.readAudioTime();
         }, 500);
+<<<<<<< HEAD
+=======
+
+        setTimeout(()=>{
+            document.getElementById("songInfo").style.opacity = "1";
+            document.getElementById("songInfo").style.top = "0px";
+
+            document.getElementById("albumArt").style.opacity = "1";
+            document.getElementById("albumArt").style.top = "-50px";
+        },1600);
+>>>>>>> parent of b643e112... Disabled Track Skip Animation
     }
 
     checkTitle(){
