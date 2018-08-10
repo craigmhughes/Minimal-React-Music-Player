@@ -1,13 +1,1 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-{"dir":"users/craighughes/music","current_song":1,"favourites":[null,null,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,null,null,0,2,null,null,4,null,null,null,5,null]}
-=======
-{"dir":"users/craighughes/music","current_song":2,"favourites":[null,null,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,null,null,0,2,null,null,4,null,5,null]}
->>>>>>> parent of b643e112... Disabled Track Skip Animation
-=======
-{"dir":"users/craighughes/music"}
->>>>>>> parent of 12a50790... Updated Layout
-=======
-{"dir":"users/craighughes/music","current_song":2,"favourites":[null,null,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,null,null,0,2,null,null,4,null,5,null]}
->>>>>>> parent of b643e112... Disabled Track Skip Animation
+{"dir":"users/craighughes/music","current_song":0,"favourites":[]}

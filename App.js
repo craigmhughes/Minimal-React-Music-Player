@@ -24,14 +24,10 @@ class App extends Component {
                 title: undefined,
                 artist: undefined
             },
-<<<<<<< HEAD
             settings_open: false,
             favourites: [],
             is_hearted: false,
             tracks: []
-=======
-            settings_open: false
->>>>>>> parent of 12a50790... Updated Layout
         };
 
         this.readMusicFiles();
@@ -200,24 +196,6 @@ class App extends Component {
 
     // Skip track forward/back based on ford val.
     skipTrack(ford){
-<<<<<<< HEAD
-<<<<<<< HEAD
-        
-=======
-
-        document.getElementById("songInfo").style.opacity = "0";
-        document.getElementById("songInfo").style.top = "5px";
-
-<<<<<<< HEAD
-=======
-        document.getElementById("songInfo").style.opacity = "0";
-        document.getElementById("songInfo").style.top = "5px";
-
->>>>>>> parent of b643e112... Disabled Track Skip Animation
-        document.getElementById("albumArt").style.opacity = "0";
-        document.getElementById("albumArt").style.top = "-70px";
-
->>>>>>> parent of b643e112... Disabled Track Skip Animation
         setTimeout(()=>{
 
             if(ford) {
@@ -242,19 +220,7 @@ class App extends Component {
             this.checkTitle();
             this.readAudioTime();
         }, 500);
-<<<<<<< HEAD
-=======
 
-        setTimeout(()=>{
-            document.getElementById("songInfo").style.opacity = "1";
-            document.getElementById("songInfo").style.top = "0px";
-
-            document.getElementById("albumArt").style.opacity = "1";
-            document.getElementById("albumArt").style.top = "-50px";
-        },1600);
-<<<<<<< HEAD
->>>>>>> parent of b643e112... Disabled Track Skip Animation
-=======
         if(ford) {
             this.state.current_song += 1;
         } else {
@@ -264,9 +230,6 @@ class App extends Component {
         this.readTrack();
         this.checkTitle();
         this.readAudioTime();
->>>>>>> parent of 12a50790... Updated Layout
-=======
->>>>>>> parent of b643e112... Disabled Track Skip Animation
     }
 
     checkTitle(){
