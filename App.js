@@ -30,6 +30,8 @@ class App extends Component {
         };
 
         this.readMusicFiles();
+
+        // TODO: Possibly add always on top toggle to settings.
         // remote.BrowserWindow.getFocusedWindow().setAlwaysOnTop(true);
 
         // Call DOM effects in this method.
@@ -44,6 +46,9 @@ class App extends Component {
             this.checkTitle();
 
             let audio = document.getElementById("audio");
+
+            // Produces time format MM:SS -- Will not work for tracks longer than 60 mins
+            // TODO: Once base project is complete - Add Hour time format.
             audio.addEventListener("timeupdate", function() {
                 let s = Math.floor(parseInt(audio.currentTime % 60));
                 let m = Math.floor(parseInt((audio.currentTime / 60) % 60));
@@ -60,6 +65,8 @@ class App extends Component {
 
     readAudioTime(){
         setTimeout(()=>{
+            // Produces time format each second, Electron + React is unresponsive to some state changes and this will
+            // make sure that time continues to re-render.
             if(document.getElementById("songDuration") !== null) {
                 let audio = document.getElementById("audio");
                 let s = Math.floor(parseInt(audio.duration % 60));
@@ -74,15 +81,16 @@ class App extends Component {
         let dir = settings.dir;
 
         if(settings.dir !== null){
-            // Append and Prepend Slashes where needed.
+            // Append and Prepend Slashes where needed. Only if the Directory has none in either start or end position.
             dir = settings.dir.charAt(settings.dir.length-1) !== "/" ? settings.dir + "/" : settings.dir;
             dir = dir.charAt(0) !== "/" && dir.charAt(0) !== "." ?
                 "/" + dir : dir;
 
+            // Sets Default directory if no directory is specified in settings.json.
             if(!(fs.existsSync(dir))){
                 this.state.music_dir = __dirname + '/src/music/';
             } else {
-            this.state.music_dir = dir;
+                this.state.music_dir = dir;
             }
 
         }
@@ -395,9 +403,9 @@ class App extends Component {
         }
 
         setTimeout(()=> {
-        if(document.getElementById("thumbInput").value.length > 0 || document.getElementById("directoryInput").value.length > 0){
-            remote.BrowserWindow.getFocusedWindow().reload();
-        }},1500);
+            if(document.getElementById("thumbInput").value.length > 0 || document.getElementById("directoryInput").value.length > 0){
+                remote.BrowserWindow.getFocusedWindow().reload();
+            }},1500);
 
         this.forceUpdate();
         this.getSettings();
@@ -456,26 +464,26 @@ class App extends Component {
                     <section className="poster">
                         <div className="overlay">
                             {this.state.current_info.title !== undefined ?
-                            <div id="songInfo">
-                                <div className="container">
-                                    <p>NOW PLAYING</p>
-                                    <h1 id="songTitle">
-                                        {this.state.current_info.title}
-                                        <i className={this.state.is_hearted ? "fas fa-heart" : "far fa-heart"} onClick={()=>{this.checkHeart()}}>{}</i>
-                                        <br/>
-                                        <span id="songArtist">{this.state.current_info.artist}</span>
-                                    </h1>
+                                <div id="songInfo">
+                                    <div className="container">
+                                        <p>NOW PLAYING</p>
+                                        <h1 id="songTitle">
+                                            {this.state.current_info.title}
+                                            <i className={this.state.is_hearted ? "fas fa-heart" : "far fa-heart"} onClick={()=>{this.checkHeart()}}>{}</i>
+                                            <br/>
+                                            <span id="songArtist">{this.state.current_info.artist}</span>
+                                        </h1>
 
-                                    <div id="songSeek">
-                                        <p id="songTime">0:00</p>
-                                        <section className="seeker">
-                                            <input type="range" min="0" max="100" step="1" defaultValue="0"
-                                                   onChange={()=>{this.setTrackPoint(document.getElementById("seekBar").value);}} id="seekBar">{}</input>
-                                        </section>
-                                        <p id="songDuration">0:00</p>
+                                        <div id="songSeek">
+                                            <p id="songTime">0:00</p>
+                                            <section className="seeker">
+                                                <input type="range" min="0" max="100" step="1" defaultValue="0"
+                                                       onChange={()=>{this.setTrackPoint(document.getElementById("seekBar").value);}} id="seekBar">{}</input>
+                                            </section>
+                                            <p id="songDuration">0:00</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
                                 : <div id="nullDirectory"><p>No Music Found</p></div>}
 
                             <div className="container" id="volumeSection">
