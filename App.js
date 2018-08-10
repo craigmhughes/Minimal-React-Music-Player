@@ -208,6 +208,12 @@ class App extends Component {
         document.getElementById("songInfo").style.opacity = "0";
         document.getElementById("songInfo").style.top = "5px";
 
+<<<<<<< HEAD
+=======
+        document.getElementById("songInfo").style.opacity = "0";
+        document.getElementById("songInfo").style.top = "5px";
+
+>>>>>>> parent of b643e112... Disabled Track Skip Animation
         document.getElementById("albumArt").style.opacity = "0";
         document.getElementById("albumArt").style.top = "-70px";
 
@@ -246,6 +252,7 @@ class App extends Component {
             document.getElementById("albumArt").style.opacity = "1";
             document.getElementById("albumArt").style.top = "-50px";
         },1600);
+<<<<<<< HEAD
 >>>>>>> parent of b643e112... Disabled Track Skip Animation
 =======
         if(ford) {
@@ -258,6 +265,8 @@ class App extends Component {
         this.checkTitle();
         this.readAudioTime();
 >>>>>>> parent of 12a50790... Updated Layout
+=======
+>>>>>>> parent of b643e112... Disabled Track Skip Animation
     }
 
     checkTitle(){
