@@ -26,8 +26,7 @@ class App extends Component {
             },
             settings_open: false,
             favourites: [],
-            is_hearted: false,
-            tracks: []
+            is_hearted: false
         };
 
         this.readMusicFiles();
@@ -83,7 +82,7 @@ class App extends Component {
             if(!(fs.existsSync(dir))){
                 this.state.music_dir = __dirname + '/src/music/';
             } else {
-                this.state.music_dir = dir;
+            this.state.music_dir = dir;
             }
 
         }
@@ -100,9 +99,16 @@ class App extends Component {
         // Set music files to the read directory
         this.state.music_files = musicfiles;
 
+        if(settings.current_song !== null){
+            this.state.current_song = settings.current_song > this.state.music_files.length ? 0 : settings.current_song;
+        }
+
+        if(settings.favourites !== null) {
+            this.state.favourites = settings.favourites;
+        }
+
         if (this.state.music_files.length > 0)
             this.readTrack();
-
     }
 
     readTrack(){
@@ -162,12 +168,19 @@ class App extends Component {
 
                 document.getElementById("albumArt").style.backgroundImage = `url(${datajpg})`;
                 document.getElementById("albumArt").className = '';
-                // document.getElementById("posterBG").style.backgroundImage = `url(${datajpg})`;
             } else {
                 document.getElementById("albumArt").style.backgroundImage = `url(${__dirname + "/src/imgs/null-album.png"})`;
                 document.getElementById("albumArt").className = 'nullart';
             }
         });
+
+        setTimeout(()=> {
+            document.getElementById("albumArtist").innerText = this.state.origin_info.artist.length > 20 ? this.state.origin_info.artist.substr(0, 20) + "..." : this.state.origin_info.artist;
+        },100);
+
+        setTimeout(()=> {
+            this.state.is_hearted = this.state.favourites.includes(this.state.current_song);
+        },100);
 
         let audio = document.getElementById("audio");
         audio.src = this.state.music_dir + this.state.music_files[this.state.current_song];
@@ -196,6 +209,13 @@ class App extends Component {
 
     // Skip track forward/back based on ford val.
     skipTrack(ford){
+
+        // document.getElementById("songInfo").style.opacity = "0";
+        // document.getElementById("songInfo").style.top = "5px";
+        //
+        // document.getElementById("albumArt").style.opacity = "0";
+        // document.getElementById("albumArt").style.top = "-70px";
+
         setTimeout(()=>{
 
             if(ford) {
@@ -221,15 +241,13 @@ class App extends Component {
             this.readAudioTime();
         }, 500);
 
-        if(ford) {
-            this.state.current_song += 1;
-        } else {
-            this.state.current_song -= 1;
-        }
-
-        this.readTrack();
-        this.checkTitle();
-        this.readAudioTime();
+        // setTimeout(()=>{
+        //     document.getElementById("songInfo").style.opacity = "1";
+        //     document.getElementById("songInfo").style.top = "0px";
+        //
+        //     document.getElementById("albumArt").style.opacity = "1";
+        //     document.getElementById("albumArt").style.top = "-50px";
+        // },1600);
     }
 
     checkTitle(){
@@ -239,7 +257,7 @@ class App extends Component {
                     this.state.current_info.title.substring(0, 22) + "..." :
                     this.state.current_info.title;
 
-                console.log(this.state.current_info.title);
+                // console.log(this.state.current_info.title);
                 this.forceUpdate();
             }, 1000);
         }
@@ -286,7 +304,7 @@ class App extends Component {
 
     getSettings(){
         this.state.settings_open = !this.state.settings_open;
-        console.log("here");
+        // console.log("here");
         // this.forceUpdate();
 
         if(this.state.settings_open){
@@ -312,10 +330,12 @@ class App extends Component {
                 document.getElementById("directoryInput").value;
 
             let json = {
-                dir: document.getElementById("directoryInput").value
+                dir: document.getElementById("directoryInput").value,
+                current_song: this.state.current_song,
+                favourites: this.state.favourites
             };
 
-            console.log(settings);
+            // console.log(settings);
 
             fs.writeFile('./src/settings.json', JSON.stringify(json), (err) => {
                 console.log(err);
@@ -369,7 +389,7 @@ class App extends Component {
                         console.log(tags);
                     });
 
-                    console.log(this.state.music_dir + this.state.music_files[this.state.current_song]);
+                    // console.log(this.state.music_dir + this.state.music_files[this.state.current_song]);
                 },1000);
             }
         }
@@ -381,6 +401,30 @@ class App extends Component {
 
         this.forceUpdate();
         this.getSettings();
+    }
+
+    checkHeart(){
+        if(this.state.favourites.includes(this.state.current_song)){
+            delete this.state.favourites[this.state.favourites.indexOf(this.state.current_song)];
+        } else {
+            console.log("added heart");
+            this.state.favourites.push(this.state.current_song);
+        }
+
+        let json = {
+            dir: document.getElementById("directoryInput").value > 0 ? document.getElementById("directoryInput").value : settings.dir,
+            current_song: this.state.current_song,
+            favourites: this.state.favourites
+        };
+
+        fs.writeFile('./src/settings.json', JSON.stringify(json), (err) => {
+            console.log(err);
+        });
+
+
+        // Force update via skipping forward and back
+        this.skipTrack(true);
+        this.skipTrack(false);
     }
 
     render(){
@@ -404,37 +448,56 @@ class App extends Component {
                 </div>
 
                 <div id="windowBar">
+                    <i className="fas fa-window-minimize" onClick={()=>{remote.BrowserWindow.getFocusedWindow().minimize()}}>{}</i>
                     <i className="fas fa-cog" onClick={()=>{this.getSettings()}}>{}</i>
-                    {/*<i className="fas fa-window-minimize" onClick={()=>{remote.BrowserWindow.getFocusedWindow().minimize()}}>{}</i>*/}
                     <i className="fas fa-times" onClick={()=>{remote.BrowserWindow.getFocusedWindow().close()}}>{}</i>
                 </div>
                 <section className="player">
                     <section className="poster">
                         <div className="overlay">
-                            <div className="container" style={{height: "100%", width: "100%"}}>
-                                <div id="albumArt" style={{background: `url(${__dirname + "/src/imgs/null-album.png"})`}}/>
-                            </div>
                             {this.state.current_info.title !== undefined ?
-                            <div className="container" style={{paddingLeft: "20px"}}>
-
-                                <h1 id="songTitle">{this.state.current_info.title}<br/><span id="songArtist">{this.state.current_info.artist}</span>
+                            <div id="songInfo">
+                                <div className="container">
+                                    <p>NOW PLAYING</p>
+                                    <h1 id="songTitle">
+                                        {this.state.current_info.title}
+                                        <i className={this.state.is_hearted ? "fas fa-heart" : "far fa-heart"} onClick={()=>{this.checkHeart()}}>{}</i>
+                                        <br/>
+                                        <span id="songArtist">{this.state.current_info.artist}</span>
                                     </h1>
 
-                                <div id="songSeek">
-                                    <p id="songTime">0:00</p>
-                                    <section className="seeker">
-                                        <input type="range" min="0" max="100" step="1" defaultValue="0"
-                                               onChange={()=>{this.setTrackPoint(document.getElementById("seekBar").value);}} id="seekBar">{}</input>
-                                    </section>
-                                    <p id="songDuration">0:00</p>
+                                    <div id="songSeek">
+                                        <p id="songTime">0:00</p>
+                                        <section className="seeker">
+                                            <input type="range" min="0" max="100" step="1" defaultValue="0"
+                                                   onChange={()=>{this.setTrackPoint(document.getElementById("seekBar").value);}} id="seekBar">{}</input>
+                                        </section>
+                                        <p id="songDuration">0:00</p>
+                                    </div>
                                 </div>
                             </div>
                                 : <div id="nullDirectory"><p>No Music Found</p></div>}
+
+                            <div className="container" id="volumeSection">
+                                <i className="fas fa-volume-up">{}</i>
+                                <div id="volume-counterpart">
+                                    <div id="vol-playtime"><div id="vol-played">{}</div></div>
+                                    <input type="range" min="0" max="100" step="1" defaultValue="50" onChange={()=>{this.setVolume()}} id="volumeBar"/>
+                                </div>
+                            </div>
                         </div>
                         <div id="posterBG">{}</div>
                     </section>
 
                     <section className="controls">
+
+                        <div className="container" style={{height: "100%", width: "100%"}}>
+                            <div id="albumArt" style={{background: `url(${__dirname + "/src/imgs/null-album.png"})`}}>
+                                <div id="albumOverlay" style={{background: `url(${__dirname + "/src/imgs/Diskoverlay.png"})`}}>
+                                    <p id="albumArtist">Unkown</p>
+                                </div>
+                            </div>
+                        </div>
                         <div className="container">
                             <i className={this.state.current_song > 0 ? "fa fa-chevron-left" : "fa fa-chevron-left limit"}
                                onClick={()=>{if (this.state.current_song > 0) {this.skipTrack(false)}}}>{}</i>
@@ -444,12 +507,6 @@ class App extends Component {
 
                             <i className={this.state.current_song < this.state.music_files.length - 1? "fa fa-chevron-right" : "fa fa-chevron-right limit"}
                                onClick={()=>{if (this.state.current_song < this.state.music_files.length - 1) {this.skipTrack(true)}}}>{}</i>
-                        </div>
-                        <div className="container">
-                            <div id="volume-counterpart">
-                                <div id="vol-playtime"><div id="vol-played">{}</div></div>
-                                <input type="range" min="0" max="100" step="1" defaultValue="50" onChange={()=>{this.setVolume()}} id="volumeBar"/>
-                            </div>
                         </div>
                     </section>
                 </section>
