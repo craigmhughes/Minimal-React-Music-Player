@@ -21,7 +21,7 @@
     "request": "latest"
   },
   "devDependencies": {
-    "electron-packager": "^12.1.0",
+    "electron-packager": "^16.0.0",
     "electron-prebuilt-compile": "^2.0.4"
   }
 }
