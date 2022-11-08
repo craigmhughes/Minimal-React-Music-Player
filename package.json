@@ -16,7 +16,7 @@
     "react": "^16.4.1",
     "react-audio-player": "^0.10.0",
     "react-dom": "^16.4.1",
-    "react-scripts": "1.1.4",
+    "react-scripts": "5.0.1",
     "safer-buffer": "^2.1.2",
     "request": "latest"
   },
