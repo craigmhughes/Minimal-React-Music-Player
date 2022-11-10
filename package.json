@@ -9,7 +9,7 @@
   "author": "Craig Hughes",
   "license": "ISC",
   "dependencies": {
-    "electron": "^2.0.5",
+    "electron": "^18.3.7",
     "iconv-lite": "^0.4.23",
     "jsmediatags": "^3.8.1",
     "node-id3": "^0.1.5",
